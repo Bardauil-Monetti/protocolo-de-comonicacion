@@ -11,6 +11,7 @@
 #define MISO2 14
 #define MOSI2 15
 
+
 void spi_init(SPI_TypeDef* SPIx) {
     if(SPIx==SPI1){
         RCC->APB2ENR|=RCC_APB2ENR_IOPAEN;
@@ -35,33 +36,34 @@ void spi_init(SPI_TypeDef* SPIx) {
         GPIOB->CRH&=~(0xF<<((MOSI2%8)*4)); //limpio
         GPIOB->CRH|=(0xB<<((MOSI2%8)*4)); //salida de funcion alternativa push pull
     }
-    SPIx->CR1=0; //limpia configuracion
-    SPIx->CR1|=SPI_CR1_MSTR; //mdodo maestro
-    SPIx->CR1|=SPI_CR1_BR_0; //velocidad del reloj
-    SPIx->CR1|=SPI_CR1_SSI;
-    SPIx->CR1|=SPI_CR1_SSM; //gestion de software
-    SPIx->CR1|=SPI_CR1_SPE; //hablita SPI
+        SPIx->CR1 = 0;                                  // LimpiO LA CONFIGURACION
+        SPIx->CR1 |= SPI_CR1_MSTR;                      // 
+        SPIx->CR1 |= SPI_CR1_SSI | SPI_CR1_SSM;         // 
+        SPIx->CR1 |= SPI_CR1_BR_1;                      // 
+        SPIx->CR1 &= ~SPI_CR1_CPOL;                     // 
+        SPIx->CR1 &= ~SPI_CR1_CPHA;                     //
+        SPIx->CR1 |= SPI_CR1_SPE;                       // habilita periférico
 }
 
-void spi_ss(SPI_TypeDef* SPIx) {
-    if(SPIx==SPI1){
-        GPIOA->BSRR=(1<<(SS1+16));
+void SPI_SS(SPI_TypeDef *spi){
+    if (spi == SPI1){
+        GPIOA->BSRR = (1 << (4 + 16));   // PA4 -> selecciona esclavo
     }
-    else if(SPIx==SPI2) GPIOB->BSRR=(1<<(SS2+16));
-}
-
-void spi_ds(SPI_TypeDef* SPIx) {
-    if(SPIx==SPI1){
-        GPIOA->BSRR=(1<<SS1);
-    } 
-    else if(SPIx==SPI2){
-        GPIOB->BSRR=(1<<SS2);
+    else if (spi == SPI2){
+        GPIOB->BSRR = (1 << (12 + 16));  // PB12
     }
 }
-
-char spi_rw_byte(SPI_TypeDef* SPIx, char data) {
-    while(!(SPIx->SR&SPI_SR_TXE)); //Espera a que haya datos transmitidos y que DR este libre
-    SPIx->DR=data;
-    while(!(SPIx->SR&SPI_SR_RXNE)); //Espera a que haya datos recibidos
-    return SPIx->DR;
+void SPI_DS(SPI_TypeDef *spi){
+    if (spi == SPI1){
+        GPIOA->BSRR = (1 << 4);   // PA4  -> desactiva esclavo
+    }
+    else if (spi == SPI2){
+        GPIOB->BSRR = (1 << 12);  // PB12 
+    }
+}
+char SPI_RW_Byte(SPI_TypeDef *spi, char data){
+    while (!(spi->SR & SPI_SR_TXE));   // Espera que SE HALLA TERMINADO LA TRASMISION DE DATOS Y EL DR ESTE LIBRE 
+    spi->DR = data;                    
+    while (!(spi->SR & SPI_SR_RXNE));  // Espera A QUE  HALLA DATOS RECIBIDO 
+    return spi->DR;                    // Devuelve LOS DATOS LEIDOS
 }
