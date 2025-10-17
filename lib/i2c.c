@@ -10,7 +10,7 @@
 void i2c_init(I2C_TypeDef* I2Cx){
     if(I2Cx==I2C1){
         RCC->APB2ENR|=RCC_APB2ENR_IOPBEN;
-        RCC->APB1ENR|=RCC_APB1ENR_I2C1EN;
+        RCC->APB1ENR|=RCC_APB1ENR_I2C1EN;// habilito el clock del i2c
         GPIOB->CRL&=~(0xF<<((SCL1)*4)); //limpio
         GPIOB->CRL|=(0xF<<((SCL1)*4)); //salida alternativa Open-Drain
         GPIOB->CRL&=~(0xF<<((SDA1)*4)); //limpio
