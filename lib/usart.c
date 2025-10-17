@@ -16,7 +16,7 @@ void usart_init(USART_TypeDef *usart, int baudrate) {
 
 
     if (usart == USART1) {
-        RCC->APB2ENR |= RCC_APB2ENR_IOPAEN;      // Habilita puerto A
+        RCC->APB2ENR |= RCC_APB2ENR_IOPAEN;      
         RCC->APB2ENR |= RCC_APB2ENR_USART1EN;    // Habilita USART1
 
         // PA9 → TX (salida alternativa push-pull)
@@ -34,7 +34,7 @@ void usart_init(USART_TypeDef *usart, int baudrate) {
 
     if (usart == USART2) {
         RCC->APB1ENR |= RCC_APB1ENR_USART2EN;    // Habilita USART2
-        RCC->APB2ENR |= RCC_APB2ENR_IOPAEN;      // Habilita puerto A
+        RCC->APB2ENR |= RCC_APB2ENR_IOPAEN;      
 
         // PA2 → TX
         GPIOA->CRL &= ~(0xF << (4 * 2));
@@ -51,7 +51,7 @@ void usart_init(USART_TypeDef *usart, int baudrate) {
    
     if (usart == USART3) {
         RCC->APB1ENR |= RCC_APB1ENR_USART3EN;    // Habilita USART3
-        RCC->APB2ENR |= RCC_APB2ENR_IOPBEN;      // Habilita puerto B
+        RCC->APB2ENR |= RCC_APB2ENR_IOPBEN;      
 
         // PB10 → TX
         GPIOB->CRH &= ~(0xF << (4 * 2));
